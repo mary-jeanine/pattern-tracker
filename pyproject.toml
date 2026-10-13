@@ -1,0 +1,36 @@
+[project]
+name = "pattern-tracker"
+version = "0.1.0"
+description = "Sewing-pattern drafting and revision-tracking tool. Personal use, single user."
+authors = [
+    { name = "MaryJeanine Seaman", email = "mas4tq@virginia.edu" }
+]
+requires-python = ">=3.11"
+dependencies = [
+    "anthropic>=1.11.0",
+    "fastapi>=0.142.2",
+    "python-dotenv>=1.2.4",
+    "python-multipart>=0.0.32",
+    "reportlab>=5.0.1",
+    "svgwrite>=1.4.3",
+    "uvicorn>=0.54.0",
+]
+
+[dependency-groups]
+dev = [
+    "httpx>=0.28.1",
+    "pytest>=9.1.1",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+# api/ is a flat top-level package (not a src/ layout) — see CLAUDE.md's
+# repo layout. Installing it editable is what lets `from api.schema import
+# ...` resolve from anywhere (tests, scripts, uvicorn) regardless of CWD.
+[tool.hatch.build.targets.wheel]
+packages = ["api"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

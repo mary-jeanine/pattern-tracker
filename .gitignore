@@ -1,0 +1,19 @@
+# secrets
+.env
+
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+*.egg-info/
+
+# uv-managed virtual environment
+.venv/
+
+# SQLite — this is the entire archive (see CLAUDE.md Phase 8); back it up
+# separately, don't rely on git history for it
+*.db
+*.db-journal
+
+# uploaded croquis sketches (Phase 4) — personal images, not project code
+/croquis/

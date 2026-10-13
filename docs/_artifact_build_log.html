@@ -1,0 +1,382 @@
+<title>Pattern Tracker Build Log</title>
+<style>
+:root{
+  --bg:#eef3f5;
+  --surface:#ffffff;
+  --ink:#1c2b33;
+  --ink-soft:#4a5d66;
+  --ink-faint:#7c8c93;
+  --line:rgba(28,43,51,0.14);
+  --line-strong:rgba(28,43,51,0.28);
+  --red:#ac4b3b;
+  --red-soft:#f2e3e0;
+  --gold:#9c7220;
+  --gold-soft:#f1e8d4;
+  --font-display:'Fraunces',Georgia,serif;
+  --font-body:'IBM Plex Sans',-apple-system,sans-serif;
+  --font-mono:'IBM Plex Mono',ui-monospace,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#121a1e;
+    --surface:#182329;
+    --ink:#e7edef;
+    --ink-soft:#a9b9bf;
+    --ink-faint:#71848c;
+    --line:rgba(231,237,239,0.14);
+    --line-strong:rgba(231,237,239,0.26);
+    --red:#e08977;
+    --red-soft:#2c1d1a;
+    --gold:#d9ae55;
+    --gold-soft:#2b2414;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#121a1e;
+  --surface:#182329;
+  --ink:#e7edef;
+  --ink-soft:#a9b9bf;
+  --ink-faint:#71848c;
+  --line:rgba(231,237,239,0.14);
+  --line-strong:rgba(231,237,239,0.26);
+  --red:#e08977;
+  --red-soft:#2c1d1a;
+  --gold:#d9ae55;
+  --gold-soft:#2b2414;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--font-body);margin:0;line-height:1.7;font-size:16px}
+h1,h2,h3{font-family:var(--font-display);font-weight:600;text-wrap:balance;color:var(--ink);margin:0}
+h1{font-size:clamp(34px,5vw,46px);font-weight:900}
+h2{font-size:24px;margin-bottom:.6em}
+h3{font-size:17px;font-weight:600;margin-bottom:.3em}
+p{margin:0 0 1em;max-width:66ch}
+.mono{font-family:var(--font-mono)}
+.eyebrow{font-family:var(--font-mono);font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-faint)}
+a{color:var(--ink);text-decoration-color:var(--line-strong);text-underline-offset:3px}
+a:hover{text-decoration-color:var(--ink)}
+a:focus-visible,button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+
+.wrap{max-width:1180px;margin:0 auto;padding:0 clamp(20px,4vw,56px)}
+
+/* ---- masthead ---- */
+.masthead{padding:56px 0 36px;border-bottom:1px solid var(--line)}
+.masthead .eyebrow{margin-bottom:10px}
+.tagline{font-size:18px;color:var(--ink-soft);max-width:62ch;margin-top:14px}
+.spec{
+  margin-top:32px;display:grid;grid-template-columns:repeat(4,1fr);
+  border:1px solid var(--line);border-radius:4px;overflow:hidden;background:var(--surface);
+}
+.spec dl{margin:0;padding:16px 18px;border-right:1px solid var(--line)}
+.spec dl:last-child{border-right:none}
+.spec dt{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:6px}
+.spec dd{margin:0;font-size:15px;font-weight:500}
+.spec dd.good{color:var(--gold)}
+
+/* ---- layout: rail + content ---- */
+.layout{display:grid;grid-template-columns:200px 1fr;gap:56px;padding:44px 0 90px;align-items:start}
+.rail{position:sticky;top:28px;display:flex;flex-direction:column;gap:2px;border-left:1px solid var(--line)}
+.rail a{
+  font-family:var(--font-mono);font-size:12.5px;color:var(--ink-faint);
+  padding:7px 0 7px 16px;border-left:2px solid transparent;margin-left:-1px;
+  text-decoration:none;transition:color .15s;
+}
+.rail a:hover{color:var(--ink-soft)}
+.rail a.active{color:var(--ink);border-left-color:var(--gold);font-weight:500}
+
+main{min-width:0}
+section{padding-bottom:52px;margin-bottom:52px;border-bottom:1px solid var(--line)}
+section:last-child{border-bottom:none}
+section>.eyebrow{display:block;margin-bottom:8px}
+
+/* ---- phase blocks ---- */
+.phase{display:grid;grid-template-columns:auto 1fr;gap:18px;margin-top:28px}
+.phase:first-of-type{margin-top:0}
+.phase-num{
+  font-family:var(--font-display);font-weight:900;font-size:26px;color:var(--ink-faint);
+  line-height:1;padding-top:2px;
+}
+.phase-body h3{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.pill{
+  font-family:var(--font-mono);font-size:10.5px;letter-spacing:.04em;
+  padding:2px 8px;border-radius:999px;background:var(--gold-soft);color:var(--gold);white-space:nowrap;
+}
+.pill.tests{background:var(--surface);border:1px solid var(--line-strong);color:var(--ink-soft)}
+
+.callout{
+  display:flex;gap:12px;padding:14px 16px;border-radius:4px;background:var(--red-soft);
+  border-left:3px solid var(--red);margin:14px 0;
+}
+.callout .eyebrow{color:var(--red);margin-bottom:4px}
+.callout p{margin:0;font-size:14.5px;color:var(--ink)}
+
+.conf{
+  display:flex;gap:12px;padding:14px 16px;border-radius:4px;background:var(--gold-soft);
+  border-left:3px solid var(--gold);margin:14px 0;
+}
+.conf .eyebrow{color:var(--gold);margin-bottom:4px}
+.conf p{margin:0;font-size:14.5px}
+
+table{width:100%;border-collapse:collapse;margin:16px 0;font-size:14px}
+caption{text-align:left;font-family:var(--font-mono);font-size:11px;letter-spacing:.06em;
+  text-transform:uppercase;color:var(--ink-faint);margin-bottom:8px;caption-side:top}
+th,td{text-align:left;padding:8px 14px 8px 0;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-family:var(--font-mono);font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-faint);font-weight:500}
+td.num{font-family:var(--font-mono);font-variant-numeric:tabular-nums;color:var(--ink-soft)}
+.table-scroll{overflow-x:auto}
+
+ul.plain{margin:0 0 1em;padding-left:1.15em}
+ul.plain li{margin-bottom:.5em;max-width:64ch}
+
+.diagram-card{
+  background:var(--surface);border:1px solid var(--line);border-radius:4px;
+  padding:20px 24px;margin:18px 0;
+}
+.diagram-card figcaption{font-size:13px;color:var(--ink-soft);margin-top:10px;max-width:54ch}
+figure{margin:0}
+
+footer{padding:32px 0 60px;border-top:1px solid var(--line)}
+footer p{font-size:13.5px;color:var(--ink-faint)}
+
+@media (max-width:860px){
+  .layout{grid-template-columns:1fr;gap:0}
+  .rail{position:static;flex-direction:row;overflow-x:auto;border-left:none;border-bottom:1px solid var(--line);padding-bottom:10px;gap:4px}
+  .rail a{border-left:none;border-bottom:2px solid transparent;padding:6px 12px;white-space:nowrap;margin-left:0}
+  .rail a.active{border-bottom-color:var(--gold)}
+  .spec{grid-template-columns:repeat(2,1fr)}
+  .spec dl:nth-child(2){border-right:none}
+  .spec dl{border-bottom:1px solid var(--line)}
+}
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,600;0,900;1,500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+
+<header class="masthead">
+  <div class="wrap">
+    <span class="eyebrow">Engineering build log · updated 2026-10-09</span>
+    <h1>Pattern Tracker</h1>
+    <p class="tagline">A tool that drafts sewing patterns from a croquis and gets better at it for one specific body over time — by tracking every fit correction and feeding the proven result back into the next draft. This is the full technical record behind the portfolio case study.</p>
+    <div class="spec">
+      <dl><dt>Stack</dt><dd>Python 3.11 · FastAPI · SQLite · Pydantic</dd></dl>
+      <dl><dt>Status</dt><dd class="good">Phases 0–3 complete</dd></dl>
+      <dl><dt>Tests</dt><dd class="good">63 passing, 0 failing</dd></dl>
+      <dl><dt>Deployment</dt><dd>Local only — no live host</dd></dl>
+    </div>
+  </div>
+</header>
+
+<div class="wrap layout">
+  <nav class="rail" id="rail">
+    <a href="#scope">Problem &amp; scope</a>
+    <a href="#design">System design</a>
+    <a href="#decisions">Stack &amp; decisions</a>
+    <a href="#phases">Build, phase by phase</a>
+    <a href="#tests">Test coverage</a>
+    <a href="#limits">What it can't do</a>
+    <a href="#next">Deployment &amp; next</a>
+  </nav>
+
+  <main>
+    <section id="scope">
+      <span class="eyebrow">01 — Problem &amp; scope</span>
+      <h2>AI-drafted patterns don't learn from being wrong</h2>
+      <p>An AI drafting a bodice has no embodied feedback — it has never worn a garment, so it cannot know a dart pulls or an armhole binds without a human saying so after a physical fitting. It can also be confidently, internally-consistently wrong: this project's own Phase&nbsp;2 armhole curve passed every automated relationship check (front longer than back, areas, closure) while its control-point bulge was roughly thirty times larger than a real armhole's deviation. And without deliberate memory, every drafting call starts from zero — the same correction gets made, and the same class of error gets re-committed, every time a new pattern is drafted from scratch.</p>
+      <p>Pattern Tracker's actual point is closing that third gap: a structured body-fit profile and a <strong>reference sloper</strong> — a bodice version explicitly marked, once it's fitted, as the trusted block — so later bodice-derived drafts start from proven geometry for this body instead of generic formulas re-run from zero. Real patternmaking practice ("draft from a block," not from scratch each time), not a bigger prompt. The revision history (every edit as a structured diff plus the reason) is what makes a sloper trustworthy and what the profile is built from — necessary plumbing underneath the point, not the point on its own.</p>
+      <p>Scope is deliberately narrow: one user, one body, no accounts, no sharing. That constraint isn't a shortcut — it's what makes SQLite over Postgres, brute-force cosine over a vector database, and a locally-run tool over a hosted one all the <em>correct</em> call rather than the cheap one. At this scale, the simpler option is also the more correct option.</p>
+    </section>
+
+    <section id="design">
+      <span class="eyebrow">02 — System design</span>
+      <h2>Two pipelines, one data model</h2>
+      <p>The tracker isn't bolted onto a separate drafting tool — it's version 1 onward of whatever the croquis step produced. <strong>Draft</strong> turns measurements into a structured pattern; <strong>track</strong> diffs every later edit against the version before it, classifies the kind of change, and logs it with your reasoning. Both read and write the same <span class="mono">Pattern</span> model.</p>
+      <p>The model's one hard rule: geometry is named points, never a raw SVG path string. Every point gets a stable, permanent id, and edges, darts, notches, and grainlines reference those ids rather than positions. A diff between two path strings is meaningless; a diff between two named points by id is exact.</p>
+
+      <figure class="diagram-card">
+        <svg viewBox="0 0 300 190" width="100%" style="max-width:300px;display:block;margin:0 auto" role="img" aria-label="A dart shown as three named points: apex, leg_a, leg_b, connected by dashed stitch lines">
+          <line x1="150" y1="22" x2="92" y2="148" stroke="var(--ink-faint)" stroke-width="1.25" stroke-dasharray="4,3"/>
+          <line x1="150" y1="22" x2="208" y2="148" stroke="var(--ink-faint)" stroke-width="1.25" stroke-dasharray="4,3"/>
+          <circle cx="150" cy="22" r="4.5" fill="var(--gold)"/>
+          <circle cx="92" cy="148" r="4.5" fill="var(--ink)"/>
+          <circle cx="208" cy="148" r="4.5" fill="var(--ink)"/>
+          <text x="150" y="12" text-anchor="middle" font-family="IBM Plex Sans" font-size="11" fill="var(--ink-soft)">apex</text>
+          <text x="92" y="166" text-anchor="middle" font-family="IBM Plex Sans" font-size="11" fill="var(--ink-soft)">leg_a</text>
+          <text x="208" y="166" text-anchor="middle" font-family="IBM Plex Sans" font-size="11" fill="var(--ink-soft)">leg_b</text>
+          <text x="150" y="36" text-anchor="middle" font-family="IBM Plex Mono" font-size="10" fill="var(--ink-faint)">bust_point</text>
+          <text x="92" y="180" text-anchor="middle" font-family="IBM Plex Mono" font-size="10" fill="var(--ink-faint)">dart_leg_a</text>
+          <text x="208" y="180" text-anchor="middle" font-family="IBM Plex Mono" font-size="10" fill="var(--ink-faint)">dart_leg_b</text>
+        </svg>
+        <figcaption>A real <span class="mono">Dart</span> from the schema — three ids, not three coordinates. If the fit shifts, <span class="mono">dart_leg_a.y</span> changes and the diff says exactly that; the id itself never moves, so every past revision that pointed at it stays valid.</figcaption>
+      </figure>
+
+      <p>Snapshots and diffs are also kept apart from the reasoning text on purpose. <span class="mono">pattern_versions</span> holds a full geometry snapshot per version, so any version re-exports to PDF without replaying history. <span class="mono">revisions</span> holds the structured deltas separately. Only <span class="mono">Revision.embedding_text()</span> — a sentence built <em>from</em> those deltas — gets embedded for the future RAG layer to search. Retrieval can describe a change; it can never originate a measurement, because the number always comes from <span class="mono">deltas</span>, read directly.</p>
+    </section>
+
+    <section id="decisions">
+      <span class="eyebrow">03 — Stack &amp; decisions</span>
+      <h2>Choices made ahead of the pressure to reverse them</h2>
+      <ul class="plain">
+        <li><strong>Pydantic dataclasses, not <span class="mono">BaseModel</span>.</strong> Porting the schema to Pydantic (Phase 1) needed real validation without breaking the positional construction already used throughout the codebase — <span class="mono">Point("a", 0, 0)</span>, not <span class="mono">Point(id="a", x=0, y=0)</span>. <span class="mono">pydantic.dataclasses.dataclass</span> gives full validation and coercion while keeping dataclass-style <span class="mono">__init__</span> and <span class="mono">__post_init__</span> — verified empirically before committing, rather than assumed.</li>
+        <li><strong>No vector database.</strong> Revision embeddings will be float32 BLOBs in SQLite, searched by brute-force cosine in Python (Phase 6, not built yet). One user, low hundreds of revisions — a linear scan over a few hundred rows beats the import cost of a vector-DB client. Decided up front so Phase 6 doesn't re-litigate it under time pressure.</li>
+        <li><strong>Seam allowance is one float, not baked-in geometry.</strong> Stored geometry is always the stitching line. The cut line is computed at export time by offsetting outward — so changing the seam allowance is a one-field revision, not a change to every coordinate in the piece.</li>
+        <li><strong>Every version is a full snapshot.</strong> Revisions are derived, never authoritative. This costs some storage at personal scale and buys back the ability to re-export any past version without replaying its whole history.</li>
+      </ul>
+    </section>
+
+    <section id="phases">
+      <span class="eyebrow">04 — Build, phase by phase</span>
+      <h2>What actually shipped</h2>
+
+      <div class="phase">
+        <div class="phase-num">0</div>
+        <div class="phase-body">
+          <h3>Repo setup <span class="pill tests">1 test</span></h3>
+          <p><span class="mono">uv</span>-managed project on a <span class="mono">hatchling</span> build backend rather than <span class="mono">uv_build</span>'s default — the repo's flat <span class="mono">api/</span> package layout needed explicit package discovery to install editable and resolve from tests, scripts, and uvicorn alike regardless of working directory. <span class="mono">.env</span> for the Anthropic key, gitignored; <span class="mono">api/db.py</span> runs the DDL on every connection (idempotent — every statement is <span class="mono">CREATE TABLE IF NOT EXISTS</span>).</p>
+        </div>
+      </div>
+
+      <div class="phase">
+        <div class="phase-num">1</div>
+        <div class="phase-body">
+          <h3>Harden the schema <span class="pill tests">16 tests</span></h3>
+          <p>Diff tests were written first, against the then-unmodified schema, specifically to find gaps rather than assume the schema was already correct.</p>
+          <div class="callout">
+            <div>
+              <span class="eyebrow">Bug found by the tests, not inspection</span>
+              <p><span class="mono">Segment</span> was the only schema object with no stable id. A bezier control-point change fell back to a whole-list comparison instead of a precise delta — the test asserting a one-field diff failed against real output. Fix: a derived id, <span class="mono">f"{start}->{end}"</span>, placed last in the field list to keep every existing positional call site working unchanged.</p>
+            </div>
+          </div>
+          <p>Also added <span class="mono">infer_change_type(deltas)</span>, priority-ordered so a revision that moves a dart <em>and</em> nudges seam allowance in the same edit reads as <span class="mono">DART</span> — the dominant, structural change — not <span class="mono">SEAM_ALLOWANCE</span>.</p>
+        </div>
+      </div>
+
+      <div class="phase">
+        <div class="phase-num">2</div>
+        <div class="phase-body">
+          <h3>Drafting engine <span class="pill tests">7 tests</span></h3>
+          <p>A fitted bodice block, front and back, following Winifred Aldrich's <em>Metric Pattern Cutting</em> for construction order — armhole depth and width from the bust measurement, shared neck width with the front dropped lower, a sloped shoulder, a bust dart, waist suppression split across the side seam and darts.</p>
+          <div class="conf">
+            <div>
+              <span class="eyebrow">Confidence, stated plainly</span>
+              <p>The construction <em>order</em> is confident. The numeric constants — the armhole-depth add-on, the neck-width fraction, the suppression split — are reconstructed from general metric-drafting practice, not transcribed from the text. Two of them (<span class="mono">back_width</span>, <span class="mono">neck_circumference</span>) now use a real measurement when supplied instead of a bust-derived guess. Tests check relationships (front armhole longer than back, waist width exactly equals waist-plus-ease-minus-darts) rather than absolute values — deliberately, since the absolute values aren't verified against the book or a muslin.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="phase">
+        <div class="phase-num">3</div>
+        <div class="phase-body">
+          <h3>SVG &amp; PDF export <span class="pill tests">22 tests</span></h3>
+          <p>Bezier curves flatten to a polyline before anything else happens to them — offsetting a cubic bezier exactly has no closed form, so the seam allowance is a per-vertex mitred offset of the flattened outline, same approach for both the SVG preview and the tiled PDF.</p>
+          <div class="callout">
+            <div>
+              <span class="eyebrow">Bug found by the tests, not inspection</span>
+              <p>The first offset implementation shrank each piece inward instead of expanding it outward — a sign error in which side of the outline counted as "out". Caught immediately by a test asserting the cut line's area must exceed the stitching line's, before it ever reached the SVG or PDF layer.</p>
+            </div>
+          </div>
+          <p>The PDF tiles across Letter or A4 with a repeating registration-mark grid for alignment and a <strong>mandatory 50mm calibration square</strong>. Page 1 is a scaled-down assembly overview with a numbered grid showing which tile is which page — the square stays at true scale in the corner, separate from the scaled-down view around it, so "page 1 has a real 50mm square" stays literally true. <em>The physical ruler check on a real printout hasn't been reported back yet — print scale is unverified until it is.</em></p>
+        </div>
+      </div>
+    </section>
+
+    <section id="tests">
+      <span class="eyebrow">05 — Test coverage</span>
+      <h2>46 passing, by phase</h2>
+      <svg viewBox="0 0 640 240" width="100%" role="img" aria-label="Bar chart: Phase 0 has 1 test, Phase 1 has 16, Phase 2 has 7, Phase 3 has 22">
+        <line x1="120" y1="20" x2="120" y2="216" stroke="var(--line-strong)" stroke-width="1"/>
+        <g font-family="IBM Plex Mono" font-size="10.5" fill="var(--ink-faint)">
+          <text x="120" y="232" text-anchor="middle">0</text>
+          <text x="216" y="232" text-anchor="middle">5</text>
+          <text x="312" y="232" text-anchor="middle">10</text>
+          <text x="408" y="232" text-anchor="middle">15</text>
+          <text x="504" y="232" text-anchor="middle">20</text>
+          <text x="600" y="232" text-anchor="middle">25</text>
+        </g>
+        <g stroke="var(--line)" stroke-width="1">
+          <line x1="216" y1="20" x2="216" y2="216"/>
+          <line x1="312" y1="20" x2="312" y2="216"/>
+          <line x1="408" y1="20" x2="408" y2="216"/>
+          <line x1="504" y1="20" x2="504" y2="216"/>
+          <line x1="600" y1="20" x2="600" y2="216"/>
+        </g>
+        <g font-family="IBM Plex Sans" font-size="13" fill="var(--ink-soft)">
+          <text x="112" y="38" text-anchor="end">Phase 0</text>
+          <text x="112" y="92" text-anchor="end">Phase 1</text>
+          <text x="112" y="146" text-anchor="end">Phase 2</text>
+          <text x="112" y="200" text-anchor="end">Phase 3</text>
+        </g>
+        <g fill="var(--gold)">
+          <rect x="120" y="24" width="19.2" height="24" rx="2"/>
+          <rect x="120" y="78" width="307.2" height="24" rx="2"/>
+          <rect x="120" y="132" width="134.4" height="24" rx="2"/>
+          <rect x="120" y="186" width="422.4" height="24" rx="2"/>
+        </g>
+        <g font-family="IBM Plex Mono" font-size="12" fill="var(--ink)">
+          <text x="145" y="40">1</text>
+          <text x="433" y="94">16</text>
+          <text x="260" y="148">7</text>
+          <text x="548" y="202">22</text>
+        </g>
+      </svg>
+      <div class="table-scroll">
+        <table>
+          <caption>Sub-area breakdown</caption>
+          <thead><tr><th>File</th><th>Tests</th><th>Checks</th></tr></thead>
+          <tbody>
+            <tr><td class="mono">test_db.py</td><td class="num">1</td><td>Schema bootstraps on first connection</td></tr>
+            <tr><td class="mono">test_diff.py</td><td class="num">4</td><td>Reorder, rename, nested curve change, no-op diff</td></tr>
+            <tr><td class="mono">test_change_type.py</td><td class="num">12</td><td>Priority ordering, axis agreement for width/length</td></tr>
+            <tr><td class="mono">test_bodice.py</td><td class="num">7</td><td>Drafting relationships, not magic numbers</td></tr>
+            <tr><td class="mono">test_export_geometry.py</td><td class="num">7</td><td>Outline closure, offset direction and area</td></tr>
+            <tr><td class="mono">test_export_svg.py</td><td class="num">4</td><td>Physical mm units, both lines, dart count, label</td></tr>
+            <tr><td class="mono">test_export_pdf.py</td><td class="num">8</td><td>Page count math, calibration square, both page sizes</td></tr>
+            <tr><td class="mono">test_main.py</td><td class="num">3</td><td>Live endpoint against a real seeded DB</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="limits">
+      <span class="eyebrow">06 — What it can't do</span>
+      <h2>Said plainly, not buried in a footnote</h2>
+      <ul class="plain">
+        <li>Drafting is a first draft, never a fitted pattern — the construction constants are reconstructed, not verified against the text or a muslin.</li>
+        <li>Outline reconstruction assumes one simple closed loop per piece (every point has exactly two connections). True for the bodice today; branching geometry isn't handled.</li>
+        <li>Darts are drawn as surface annotations, not cut as a V into the outline — the simpler of two real conventions, chosen without strong confidence it's the more common one.</li>
+        <li>Print scale is unverified until the physical ruler check on the calibration square is reported back.</li>
+        <li>No garment type beyond a bodice block yet — skirt/trouser/sleeve measurements already exist on the schema, deliberately ahead of need, but no drafting logic uses them.</li>
+      </ul>
+    </section>
+
+    <section id="next" style="border-bottom:none">
+      <span class="eyebrow">07 — Deployment &amp; next</span>
+      <h2>Local only, on purpose</h2>
+      <p>This runs on one machine, never deployed live. A public deployment means an Anthropic API key and a vision/RAG endpoint anyone could hit — rate limiting, auth, and spend caps just to stay safe — and it would put body measurements and fit notes on a public host for no real benefit: a visitor has no croquis and no muslin, so a live version would show them an empty tool. The revision history that's the actual point of the project only accumulates through real sewing, which only happens here.</p>
+      <p>The portfolio's sewing-box item links to a case study about this project instead of an embedded feature — that write-up lives at <span class="mono">docs/CASE_STUDY.md</span> in this repo, updated phase by phase alongside this log. Next up: Phase 4 (croquis interpretation) or Phase 5 (revision API), independent of each other once Phase 2 landed — both feed Phase 6, where the body profile and reference sloper actually close the loop described in §01.</p>
+    </section>
+  </main>
+</div>
+
+<footer>
+  <div class="wrap">
+    <p>Pattern Tracker — personal project, local-only. This page is a working engineering record, not the portfolio copy.</p>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var links = Array.prototype.slice.call(document.querySelectorAll('#rail a'));
+  var sections = links.map(function(a){ return document.querySelector(a.getAttribute('href')); });
+  if (!('IntersectionObserver' in window)) return;
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if (!entry.isIntersecting) return;
+      var idx = sections.indexOf(entry.target);
+      if (idx === -1) return;
+      links.forEach(function(a){ a.classList.remove('active'); });
+      links[idx].classList.add('active');
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+  sections.forEach(function(s){ if (s) io.observe(s); });
+})();
+</script>
